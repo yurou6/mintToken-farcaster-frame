@@ -1,8 +1,9 @@
-import { Button, Frog, TextInput } from 'frog'
+import { Button, Frog } from 'frog'
 import { devtools } from 'frog/dev'
 import { pinata } from 'frog/hubs'
 import { serveStatic } from 'frog/serve-static'
 import { handle } from 'frog/vercel'
+import { abi } from '../abi.js'
 
 // Uncomment to use Edge Runtime.
 // export const config = {
@@ -17,54 +18,49 @@ export const app = new Frog({
 })
 
 app.frame('/', (c) => {
-  const { buttonValue, inputText, status, frameData, verified } = c
-  const fruit = inputText || buttonValue
-  const { fid } = frameData || {}
-
-  console.log('verified', verified)
-  console.log('fid', fid)
   return c.res({
+    action: '/finish',
     image: (
-      <div
-        style={{
-          alignItems: 'center',
-          background:
-            status === 'response'
-              ? 'linear-gradient(to right, #432889, #17101F)'
-              : 'black',
-          backgroundSize: '100% 100%',
-          display: 'flex',
-          flexDirection: 'column',
-          flexWrap: 'nowrap',
-          height: '100%',
-          justifyContent: 'center',
-          textAlign: 'center',
-          width: '100%',
-        }}
-      >
-        <div
-          style={{
-            color: 'white',
-            fontSize: 60,
-            fontStyle: 'normal',
-            letterSpacing: '-0.025em',
-            lineHeight: 1.4,
-            marginTop: 30,
-            padding: '0 120px',
-            whiteSpace: 'pre-wrap',
-          }}
-        >
-          {status === 'response' ? `FID: ${fid?.toString()}` : 'Welcome!'}
-        </div>
+      <div style={{ color: 'white', display: 'flex', fontSize: 60 }}>
+        Perform a transaction
       </div>
     ),
-    intents: [
-      <TextInput placeholder="Enter custom fruit..." />,
-      <Button value="apples">Apples</Button>,
-      <Button value="oranges">Oranges</Button>,
-      <Button value="bananas">Bananas</Button>,
-      status === 'response' && <Button.Reset>Reset</Button.Reset>,
+    intents: [<Button.Transaction target="/mint">Mint</Button.Transaction>],
+  })
+})
+
+app.frame('/finish', (c) => {
+  const { transactionId } = c
+  return c.res({
+    image: (
+      <div style={{ color: 'white', display: 'flex', fontSize: 60 }}>
+        Transaction ID: {transactionId}
+      </div>
+    ),
+  })
+})
+
+app.transaction('/mint', (c) => {
+  const { address } = c
+  return c.contract({
+    abi,
+    functionName: 'claim',
+    args: [
+      address,
+      0n,
+      1n,
+      '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      0n,
+      {
+        proof: [],
+        quantityLimitPerWallet: 100n,
+        pricePerToken: 0n,
+        currency: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      },
+      '0x',
     ],
+    chainId: 'eip155:84532',
+    to: '0x858ee7182907599100270328c7a76a2e062F6645',
   })
 })
 
