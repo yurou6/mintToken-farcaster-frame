@@ -3,6 +3,7 @@ import { devtools } from 'frog/dev'
 import { pinata } from 'frog/hubs'
 import { serveStatic } from 'frog/serve-static'
 import { handle } from 'frog/vercel'
+import type { Address } from 'viem'
 import { baseSepolia } from 'viem/chains'
 import { abi } from '../abi.js'
 
@@ -39,7 +40,7 @@ app.frame('/finish', (c) => {
 })
 
 app.transaction('/mint', (c) => {
-  const { address } = c
+  const address = c.address as Address
   return c.contract({
     abi,
     functionName: 'claim',
