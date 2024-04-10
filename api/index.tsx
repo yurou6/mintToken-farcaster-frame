@@ -3,6 +3,7 @@ import { devtools } from 'frog/dev'
 import { pinata } from 'frog/hubs'
 import { serveStatic } from 'frog/serve-static'
 import { handle } from 'frog/vercel'
+import { baseSepolia } from 'viem/chains'
 import { abi } from '../abi.js'
 
 // Uncomment to use Edge Runtime.
@@ -59,7 +60,7 @@ app.transaction('/mint', (c) => {
       },
       '0x',
     ],
-    chainId: 'eip155:84532',
+    chainId: `eip155:${baseSepolia.id}`,
     to: '0x858ee7182907599100270328c7a76a2e062F6645',
   })
 })
