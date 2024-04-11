@@ -22,8 +22,11 @@ export const app = new Frog({
 app.frame('/', (c) => {
   return c.res({
     action: '/finish',
-    image: 'http://localhost:5173/og.png',
-    imageAspectRatio: '1:1',
+    image: (
+      <div style={{ color: 'white', display: 'flex', fontSize: 60 }}>
+        Perform a transaction
+      </div>
+    ),
     intents: [<Button.Transaction target="/mint">Mint</Button.Transaction>],
   })
 })
@@ -41,6 +44,8 @@ app.frame('/finish', (c) => {
 
 app.transaction('/mint', (c) => {
   const address = c.address as Address
+
+  console.log('address', address)
   return c.contract({
     abi,
     functionName: 'claim',
