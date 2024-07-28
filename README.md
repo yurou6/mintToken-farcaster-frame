@@ -4,7 +4,7 @@ This project provides mint piggy token interface built on Farcaster Frames. User
 # Installation
 1. Clone the repository
 ```
-git clone git@github.com:goftok/hackathon5.git
+git clone https://github.com/yurou6/mintToken-farcaster-frame.git
 ```
 
 2. Install dependencies and run the project
